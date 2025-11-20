@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkphem1pbmUncyBNb3JuaW5nIFNjaGVkdWxlIiwKICAic2hvcnRfbmFtZSI6ICJNb3JuaW5nIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmNWY1ZjUiLAogICJ0aGVtZV9jb2xvciI6ICIjMDA3YmZmIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3RleHQgeT0nLjllbScgZm9udC1zaXplPSc5MCclM0UlRjAlOUYlOEMlODUlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <title>Jazmine's Morning Schedule</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+        }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        .schedule-item:hover {
+            background-color: #e9e9e9;
+        }
+        .schedule-item.completed {
+            background-color: #d4edda;
+        }
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .time {
+            font-weight: bold;
+            color: #007bff;
+            min-width: 100px;
+            font-size: 13px;
+        }
+        .task {
+            color: #555;
+            font-size: 14px;
+        }
+        @media (max-width: 480px) {
+            .schedule-item {
+                padding: 10px;
+                margin-bottom: 6px;
+                font-size: 13px;
+            }
+            input[type="checkbox"] {
+                width: 22px;
+                height: 22px;
+                margin-right: 10px;
+            }
+            .time {
+                min-width: 85px;
+                font-size: 12px;
+            }
+            .task {
+                font-size: 13px;
+            }
+        }
+        .schedule-item.completed .task {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .reset-btn:hover {
+            background-color: #0056b3;
+        }
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+        @media (max-width: 480px) {
+            .reset-btn {
+                padding: 12px;
+                font-size: 15px;
+            }
+        }
+        .alarm-section {
+            background-color: #fff3cd;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .alarm-btn {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            min-width: 120px;
+            touch-action: manipulation;
+        }
+        @media (max-width: 480px) {
+            .alarm-section {
+                padding: 10px;
+                margin-bottom: 12px;
+                font-size: 13px;
+            }
+            .alarm-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+                min-width: 100px;
+            }
+        }
+        .alarm-on {
+            background-color: #28a745;
+            color: white;
+        }
+        .alarm-off {
+            background-color: #dc3545;
+            color: white;
+        }
+        .alarm-status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .notification-section {
+            background-color: #e7f3ff;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .notification-status {
+            margin-top: 8px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌅 Jazmine's Morning Schedule</h1>
+        <div style="text-align: center; font-size: 22px; font-weight: bold; color: #007bff; margin-bottom: 15px;" id="current-time"></div>
+        
+        <div class="notification-section">
+            <div>📱 Push Notifications (Weekdays Only)</div>
+            <button class="alarm-btn alarm-on" id="notification-btn" onclick="requestNotificationPermission()">Enable Notifications</button>
+            <div class="notification-status" id="notification-status">Click to enable wake-up notifications at 5:40 AM on weekdays</div>
+        </div>
+
+        <div id="weekday-content">
+            <div class="alarm-section">
+                <div>⏰ In-App Alarm: 5:40 AM (Weekdays Only)</div>
+                <button class="alarm-btn alarm-on" id="alarm-toggle" onclick="toggleAlarm()">Alarm ON</button>
+                <div class="alarm-status" id="alarm-status"></div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" id="task1">
+                <label for="task1">
+                    <span class="time">⏰ 5:40 AM</span>
+                    <span class="task">Wake up</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task2">
+                <label for="task2">
+                    <span class="time">🚽 5:40-5:45 AM</span>
+                    <span class="task">Use the bathroom</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task3">
+                <label for="task3">
+                    <span class="time">👗 5:45-6:00 AM</span>
+                    <span class="task">Get dressed for school</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task4">
+                <label for="task4">
+                    <span class="time">🍳 6:00-6:08 AM</span>
+                    <span class="task">Go downstairs and make breakfast</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task5">
+                <label for="task5">
+                    <span class="time">🍽️ 6:08-6:16 AM</span>
+                    <span class="task">Sit down and eat breakfast</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task6">
+                <label for="task6">
+                    <span class="time">🪥 6:16-6:21 AM</span>
+                    <span class="task">Go back upstairs and brush teeth</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task7">
+                <label for="task7">
+                    <span class="time">🎒 6:21-6:30 AM</span>
+                    <span class="task">Get school supplies together</span>
+                </label>
+            </div>
+
+            <div class="schedule-item">
+                <input type="checkbox" id="task8">
+                <label for="task8">
+                    <span class="time">🚌 6:30 AM</span>
+                    <span class="task">Leave the house to catch the 6:34 AM bus</span>
+                </label>
+            </div>
+
+            <button class="reset-btn" onclick="resetSchedule()">Reset Schedule</button>
+        </div>
+        
+        <div id="weekend-content" style="display: none;">
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 60px; margin-bottom: 20px;">🌟</div>
+                <h2 style="color: #007bff; margin-bottom: 20px;">It's the Weekend, Jazmine!</h2>
+                <div id="encouraging-message" style="font-size: 18px; line-height: 1.6; color: #555; padding: 20px; background-color: #f9f9f9; border-radius: 10px; margin: 20px 0;">
+                </div>
+                <div style="font-size: 14px; color: #888; margin-top: 20px;">
+                    Message updates every hour ✨
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 5px; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 10px;">📱 Transfer to Mobile</div>
+            <div style="font-size: 13px; margin-bottom: 10px;">Scan this QR code with your phone's camera</div>
+            <canvas id="qrcode" style="margin: 0 auto; display: block;"></canvas>
+            <div style="font-size: 12px; margin-top: 10px; color: #666;">
+                Or copy this link:<br>
+                <input type="text" id="pageUrl" readonly style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let alarmEnabled = true;
+        let alarmTriggered = false;
+        let notificationPermissionGranted = false;
+        let dailyNotificationScheduled = false;
+        const alarmSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjGJ0fPTgjMGHm7A7+OZUQ8PVKvo8bFfHgU8ltj0xXkpBSh+zPLaizsIGGS36+qhUQ4NUKXi8bllHAY9k9X0zoU1BhxqvO7mnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv5Z1SDw9Sp+Tvs2IcBTqU1/PLgC4FJnvK8dyOPgkWYrbq7aNUDg5QpOPysmEbBTyS1PTQgjIGHm6879WdUg8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv1Z1SDw9Sp+Tvs2IcBTqU1/PLgC4FJnvK8dyOPgkWYrbq7aNUDg5QpOPysmEbBTyS1PTQgjIGHm6879WdUg8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv1Z1SDw8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv1Z1SDw9Sp+Tvs2IcBTqU1/PLgC4FJnvK8dyOPgkWYrbq7aNUDg5QpOPysmEbBTyS1PTQgjIGHm6879WdUg8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv1Z1SDw9Sp+Tvs2IcBTqU1/PLgC4FJnvK8dyOPgkWYrbq7aNUDg5QpOPysmEbBTyS1PTQgjIGHm6879WdUg8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/KyYRsFPJLU9NCCMgYebrzv1Z1SDw9Sp+Tvs2IcBTqU1/PLgC4FJnvK8dyOPgkWYrbq7aNUDg5QpOPysmEbBTyS1PTQgjIGHm6879WdUg8PUqfk77NiHAU6lNfzy4AuBSZ7yvHcjj4JFmK26u2jVA4OUKTj8rJhGwU8ktT00IIyBh5uvO/VnVIPD1Kn5O+zYhwFOpTX88uALgUme8rx3I4+CRZiturto1QODlCk4/K=');
+        
+        // Encouraging messages for weekends
+        const encouragingMessages = [
+            "You've worked so hard this week! Today is YOUR day to relax, have fun, and do what makes you happy. You deserve it! 💖",
+            "Good morning, superstar! ✨ Take your time today. Sleep in, enjoy your favorite breakfast, and make this weekend amazing!",
+            "Hey Jazmine! 🌈 Remember, rest is just as important as hard work. Enjoy every moment of your weekend!",
+            "You're doing an incredible job balancing school and life! 🎉 Today, focus on the things that bring you joy!",
+            "Rise and shine when you're ready! 🌻 This weekend is all about YOU. No schedules, no rush, just pure relaxation!",
+            "Happy Weekend, Jazmine! 🎨 Whether you're being creative, playing, or just chilling - make it count!",
+            "You've earned this break! 🏆 Be kind to yourself today and do something that makes your heart smile!",
+            "Good vibes only today! ☀️ Your hard work during the week means you get to enjoy guilt-free weekend fun!",
+            "Weekend mode activated! 🎮 Time to recharge those batteries and have some serious fun. You've got this!",
+            "Hey there, amazing human! 🌟 Today's agenda: Be happy, be yourself, and enjoy the freedom of the weekend!"
+        ];
+        
+        let currentMessageIndex = 0;
+        let lastMessageHour = -1;
+        
+        // Check notification permission on load
+        if ('Notification' in window) {
+            if (Notification.permission === 'granted') {
+                notificationPermissionGranted = true;
+                updateNotificationUI(true);
+                scheduleDailyNotification();
+            } else if (Notification.permission === 'denied') {
+                updateNotificationUI(false, 'Notifications blocked. Please enable in browser settings.');
+            }
+        } else {
+            document.getElementById('notification-status').textContent = 'Notifications not supported in this browser';
+            document.getElementById('notification-btn').disabled = true;
+        }
+        
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('This browser does not support notifications');
+                return;
+            }
+            
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    notificationPermissionGranted = true;
+                    updateNotificationUI(true);
+                    scheduleDailyNotification();
+                    
+                    // Show test notification
+                    new Notification('Morning Schedule Ready! 🌅', {
+                        body: 'You will receive a wake-up notification at 5:40 AM',
+                        icon: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ctext y=\'.9em\' font-size=\'90\'%3E🌅%3C/text%3E%3C/svg%3E',
+                        tag: 'test-notification'
+                    });
+                } else {
+                    updateNotificationUI(false, 'Permission denied. Click again to retry.');
+                }
+            });
+        }
+        
+        function updateNotificationUI(enabled, message) {
+            const btn = document.getElementById('notification-btn');
+            const status = document.getElementById('notification-status');
+            
+            if (enabled) {
+                btn.textContent = '✓ Notifications Enabled';
+                btn.className = 'alarm-btn alarm-on';
+                btn.disabled = true;
+                status.textContent = message || 'Wake-up notification scheduled for 5:40 AM on weekdays';
+                status.style.color = '#28a745';
+            } else {
+                btn.textContent = 'Enable Notifications';
+                btn.className = 'alarm-btn alarm-off';
+                status.textContent = message || 'Click to enable wake-up notifications on weekdays';
+                status.style.color = '#dc3545';
+            }
+        }
+        
+        function isWeekday() {
+            const day = new Date().getDay();
+            // 0 = Sunday, 6 = Saturday
+            return day !== 0 && day !== 6;
+        }
+        
+        function updateWeekendDisplay() {
+            const weekdayContent = document.getElementById('weekday-content');
+            const weekendContent = document.getElementById('weekend-content');
+            
+            if (isWeekday()) {
+                weekdayContent.style.display = 'block';
+                weekendContent.style.display = 'none';
+            } else {
+                weekdayContent.style.display = 'none';
+                weekendContent.style.display = 'block';
+                updateEncouragingMessage();
+            }
+        }
+        
+        function updateEncouragingMessage() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // Change message every hour
+            if (currentHour !== lastMessageHour) {
+                currentMessageIndex = currentHour % encouragingMessages.length;
+                lastMessageHour = currentHour;
+            }
+            
+            document.getElementById('encouraging-message').textContent = encouragingMessages[currentMessageIndex];
+        }
+        
+        function scheduleDailyNotification() {
+            if (!notificationPermissionGranted) return;
+            
+            // Check every minute if it's time to send notification
+            setInterval(() => {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                
+                // Send notification at 5:40 AM only on weekdays
+                if (isWeekday() && hours === 5 && minutes === 40 && !dailyNotificationScheduled) {
+                    sendWakeUpNotification();
+                    dailyNotificationScheduled = true;
+                }
+                
+                // Reset flag at 5:41 AM
+                if (hours === 5 && minutes === 41) {
+                    dailyNotificationScheduled = false;
+                }
+            }, 30000); // Check every 30 seconds
+        }
+        
+        function sendWakeUpNotification() {
+            if (!notificationPermissionGranted) return;
+            
+            const notification = new Notification('⏰ Time to Wake Up, Jazmine! 🌅', {
+                body: 'It\'s 5:40 AM! Time to start your morning routine.',
+                icon: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ctext y=\'.9em\' font-size=\'90\'%3E⏰%3C/text%3E%3C/svg%3E',
+                requireInteraction: true,
+                tag: 'wake-up-alarm',
+                vibrate: [200, 100, 200, 100, 200]
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+        
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const day = now.getDay();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const displayMinutes = minutes.toString().padStart(2, '0');
+            const displaySeconds = seconds.toString().padStart(2, '0');
+            
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayName = days[day];
+            
+            document.getElementById('current-time').textContent = 
+                `${dayName} ${displayHours}:${displayMinutes}:${displaySeconds} ${ampm}`;
+            
+            // Update weekend display
+            updateWeekendDisplay();
+            
+            // Check if in-app alarm should trigger (5:40 AM on weekdays only)
+            if (alarmEnabled && !alarmTriggered && isWeekday() && hours === 5 && minutes === 40 && seconds === 0) {
+                triggerAlarm();
+            }
+        }
+        
+        function triggerAlarm() {
+            alarmTriggered = true;
+            document.getElementById('alarm-status').textContent = '🔔 WAKE UP! Time to start your day!';
+            document.getElementById('alarm-status').style.color = '#dc3545';
+            
+            // Play alarm sound
+            alarmSound.loop = true;
+            alarmSound.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Show dismiss button
+            const dismissBtn = document.createElement('button');
+            dismissBtn.textContent = 'Dismiss Alarm';
+            dismissBtn.className = 'alarm-btn alarm-off';
+            dismissBtn.style.marginTop = '10px';
+            dismissBtn.onclick = dismissAlarm;
+            document.querySelector('.alarm-section').appendChild(dismissBtn);
+        }
+        
+        function dismissAlarm() {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            document.getElementById('alarm-status').textContent = 'Alarm dismissed. Have a great day!';
+            document.getElementById('alarm-status').style.color = '#28a745';
+            const dismissBtn = document.querySelector('.alarm-section button:last-child');
+            if (dismissBtn && dismissBtn.textContent === 'Dismiss Alarm') {
+                dismissBtn.remove();
+            }
+        }
+        
+        function toggleAlarm() {
+            alarmEnabled = !alarmEnabled;
+            const btn = document.getElementById('alarm-toggle');
+            const status = document.getElementById('alarm-status');
+            
+            if (alarmEnabled) {
+                btn.textContent = 'Alarm ON';
+                btn.className = 'alarm-btn alarm-on';
+                if (isWeekday()) {
+                    status.textContent = 'In-app alarm is set for 5:40 AM (weekdays only)';
+                } else {
+                    status.textContent = 'In-app alarm is ON but disabled on weekends';
+                }
+                status.style.color = '#28a745';
+                alarmTriggered = false;
+            } else {
+                btn.textContent = 'Alarm OFF';
+                btn.className = 'alarm-btn alarm-off';
+                status.textContent = 'In-app alarm is disabled';
+                status.style.color = '#dc3545';
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+            }
+        }
+        
+        // Initialize alarm status
+        toggleAlarm();
+        
+        // Update time immediately and then every second
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Add event listeners to all checkboxes
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const scheduleItem = this.closest('.schedule-item');
+                if (this.checked) {
+                    scheduleItem.classList.add('completed');
+                } else {
+                    scheduleItem.classList.remove('completed');
+                }
+            });
+        });
+
+        // Reset function
+        function resetSchedule() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.closest('.schedule-item').classList.remove('completed');
+            });
+        }
+        
+        // Generate QR Code
+        function generateQRCode() {
+            const canvas = document.getElementById('qrcode');
+            const url = window.location.href;
+            document.getElementById('pageUrl').value = url;
+            
+            // Simple QR Code generation using a library-free approach
+            // For production, you'd want to use a proper QR library
+            const qrSize = 200;
+            const ctx = canvas.getContext('2d');
+            canvas.width = qrSize;
+            canvas.height = qrSize;
+            
+            // Create QR code using Google Charts API
+            const qrApiUrl = `https://chart.googleapis.com/chart?cht=qr&chs=${qrSize}x${qrSize}&chl=${encodeURIComponent(url)}`;
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, qrSize, qrSize);
+            };
+            img.onerror = function() {
+                // Fallback: draw text if QR code fails
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, qrSize, qrSize);
+                ctx.fillStyle = '#333';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('QR Code', qrSize/2, qrSize/2 - 10);
+                ctx.fillText('unavailable', qrSize/2, qrSize/2 + 10);
+                ctx.fillText('Use link below', qrSize/2, qrSize/2 + 30);
+            };
+            img.src = qrApiUrl;
+        }
+        
+        // Generate QR code when page loads
+        window.addEventListener('load', generateQRCode);
+    </script>
+</body>
+</html>
